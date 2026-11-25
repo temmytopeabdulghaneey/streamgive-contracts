@@ -1474,6 +1474,21 @@ fn list_ngos_page_out_of_range_start_returns_empty_with_total() {
 }
 
 #[test]
+fn list_ngos_page_zero_limit_returns_empty_with_total() {
+    let (env, client, _admin) = setup();
+    for _ in 0..5 {
+        let owner = Address::generate(&env);
+        client.register(&owner, &String::from_str(&env, "NGO"));
+    }
+
+    let page = client.list_ngos_page(&0, &0);
+
+    assert_eq!(page.owners.len(), 0);
+    assert_eq!(page.owners, Vec::new(&env));
+    assert_eq!(page.next, client.total_ngos());
+}
+
+#[test]
 fn list_ngos_page_empty_registry_returns_total_zero() {
     let (_env, client, _admin) = setup();
 

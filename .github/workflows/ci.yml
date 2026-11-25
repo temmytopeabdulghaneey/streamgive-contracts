@@ -30,6 +30,14 @@ jobs:
       - name: Cache cargo
         uses: Swatinem/rust-cache@v2
 
+      - name: Install cargo-deny
+        uses: taiki-e/install-action@v2
+        with:
+          tool: cargo-deny
+
+      - name: Check advisories, licenses, bans and sources
+        run: cargo deny check
+
       - name: ShellCheck
         uses: ludeeus/action-shellcheck@2.0.0
         with:
