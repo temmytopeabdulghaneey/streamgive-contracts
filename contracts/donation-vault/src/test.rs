@@ -6670,7 +6670,20 @@ fn set_registry_publishes_event() {
 
     s.client.set_registry(&registry);
 
-    assert_last_event(&s.env, (symbol_short!("regset"),), registry.clone());
+    assert_last_event(
+        &s.env,
+        (symbol_short!("regset"),),
+        (registry.clone(), None::<Address>),
+    );
+
+    let replacement = Address::generate(&s.env);
+    s.client.set_registry(&replacement);
+
+    assert_last_event(
+        &s.env,
+        (symbol_short!("regset"),),
+        (replacement, Some(registry)),
+    );
 }
 
 #[test]

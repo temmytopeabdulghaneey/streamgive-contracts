@@ -186,9 +186,10 @@ pub struct CancelGraceLedgersSetEvent {
     pub grace_ledgers: u32,
 }
 
-#[contractevent(topics = ["regset"], data_format = "single-value")]
+#[contractevent(topics = ["regset"], data_format = "vec")]
 pub struct RegistrySetEvent {
     pub registry: Address,
+    pub previous_registry: Option<Address>,
 }
 
 #[contractevent(topics = ["regclr"], data_format = "single-value")]
@@ -2615,10 +2616,15 @@ impl DonationVault {
     /// ```
     pub fn set_registry(env: Env, registry: Address) -> Result<(), Error> {
         require_admin(&env)?;
+        let previous_registry = env.storage().instance().get(&DataKey::Registry);
         env.storage().instance().set(&DataKey::Registry, &registry);
         extend_instance_ttl(&env);
 
-        RegistrySetEvent { registry }.publish(&env);
+        RegistrySetEvent {
+            registry,
+            previous_registry,
+        }
+        .publish(&env);
 
         Ok(())
     }

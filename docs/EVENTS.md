@@ -474,7 +474,11 @@ contract.
 | | |
 |---|---|
 | Topics | `("regset",)` |
-| Data | `registry: Address` (the new registry address) |
+| Data | `(registry: Address, previous_registry: Option<Address>)` |
+
+The previous registry is `None` (XDR void) when no registry was configured,
+including after a clear. Historical `regset` events contain a single address.
+Indexers reading both versions can distinguish them by the payload shape.
 
 Once set, `create_stream` verifies the NGO against this registry. To clear the
 registry pointer back to `None`, the admin calls `clear_registry` (emitting `regclr`).
